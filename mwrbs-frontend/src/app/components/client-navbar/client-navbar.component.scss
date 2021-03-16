@@ -1,0 +1,95 @@
+$navbar-heigt: 100px;
+$navbar-heigt-scrolled: 80px;
+$default-padding: 0px 1.5rem 0px 1.5rem;
+$navbar-z-index: 100;
+$box-shadow: 0px 6px 9px 0px rgba(0, 0, 0, 0.06);
+$default-transition: all .8s;
+$scrolled-transition: all 1.2s;
+
+.navbar-toggler:focus, .navbar-toggler:active {
+    outline: none;
+    box-shadow: none;
+}
+
+@media screen and (min-width: 1440px) {
+    .navbar {
+        height: $navbar-heigt;
+        position: fixed;
+        padding: 0px 270px 0px 270px!important;
+        width: 100%;
+        z-index: $navbar-z-index;
+        -webkit-transition: $default-transition;
+        -moz-transition: $default-transition;
+        transition: $default-transition;
+    }
+    
+    .scrolled {
+        height: $navbar-heigt-scrolled !important;
+        padding: $default-padding !important;
+        width: 100% !important;
+        z-index: $navbar-z-index !important;
+        -webkit-transition: $scrolled-transition;
+        -moz-transition: $scrolled-transition;
+        transition: $scrolled-transition;
+        box-shadow: $box-shadow;
+        -webkit-box-shadow: $box-shadow;
+        -moz-box-shadow: $box-shadow;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    .navbar {
+        height: 95px;
+        position: fixed;
+        padding: 0px 50px 0px 50px !important;
+        width: 100%;
+        z-index: $navbar-z-index;
+        -webkit-transition: $default-transition;
+        -moz-transition: $default-transition;
+        transition: $default-transition;
+    }
+
+    .scrolled {
+        height: $navbar-heigt-scrolled !important;
+        padding: $default-padding !important;
+        width: 100% !important;
+        z-index: $navbar-z-index !important;
+        -webkit-transition: $scrolled-transition;
+        -moz-transition: $scrolled-transition;
+        transition: $scrolled-transition;
+        box-shadow: $box-shadow;
+        -webkit-box-shadow: $box-shadow;
+        -moz-box-shadow: $box-shadow;
+    }
+}
+  
+@media screen and (max-width: 600px) {
+    .navbar {
+        height: 90px;
+        position: fixed;
+        padding: 0px 40px 0px 40px !important;
+        width: 100%;
+        z-index: $navbar-z-index;
+        -webkit-transition: $default-transition;
+        -moz-transition: $default-transition;
+        transition: $default-transition;
+    }
+
+    .scrolled {
+        height: $navbar-heigt-scrolled !important;
+        padding: $default-padding !important;
+        width: 100% !important;
+        z-index: $navbar-z-index !important;
+        -webkit-transition: $scrolled-transition;
+        -moz-transition: $scrolled-transition;
+        transition: $scrolled-transition;
+        box-shadow: $box-shadow;
+        -webkit-box-shadow: $box-shadow;
+        -moz-box-shadow: $box-shadow;
+    }
+}
+
+.navbar-brand-img {
+    width: 110px;
+    max-height: none !important;
+}

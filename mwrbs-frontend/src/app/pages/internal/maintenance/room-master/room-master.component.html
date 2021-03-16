@@ -1,0 +1,154 @@
+<div class="header bg-gradient-info pb-8 pt-5 pt-md-8"></div>
+<div class="container-fluid mt--7">
+    <div class="row">
+        <div class="col">
+            <div class="card shadow" [appBlockUi]="roomMasterDataGrid.isProcessing">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center p-lg-2">
+                        <div class="col-lg-12">
+                            <form (submit)="roomMasterDataGrid.load(true)">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <input type="text" class="form-control" name="roomName"
+                                            [(ngModel)]="filter.roomName" placeholder="Room Name">
+                                    </div>
+                                    <div class="col">
+                                        <select class="form-control" name="roomType" [(ngModel)]="filter.roomTypeId">
+                                            <option value="0">Select Room Type</option>
+                                            <option *ngFor="let item of commonService?.defaultValues?.roomTypes"
+                                                [value]="item.roomTypeId">
+                                                {{item.roomTypeName}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <select class="form-control" name="roomStatus"
+                                            [(ngModel)]="filter.roomStatusId">
+                                            <option value="0">Select Room Status</option>
+                                            <option *ngFor="let item of commonService?.defaultValues?.roomStatuses"
+                                                [value]="item.roomStatusId">
+                                                {{item.roomStatusName}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col text-right">
+                                        <button type="button" class="btn btn-success" (click)="add()">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                            New
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Room Type</th>
+                                    <th scope="col">Room Name</th>
+                                    <th scope="col">Modified By</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngIf="!roomMasterDataGrid || !roomMasterDataGrid.itemsOnCurrentPage.length">
+                                    <td class="text-center" colspan="4">No records found.</td>
+                                </tr>
+                                <tr *ngFor="let item of roomMasterDataGrid.itemsOnCurrentPage">
+                                    <td>{{item.roomTypeName}}</td>
+                                    <td>
+                                        <button class="btn btn-link" (click)="view(item)">{{item.roomName}}</button>
+                                    </td>
+                                    <td>
+                                        {{item.modifiedBy}}
+                                        <p class="table-date-on">{{item.modifiedOn | date:'medium'}}</p>
+                                    </td>
+                                    <td>{{item.roomStatusName}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer py-4">
+                        <app-pagination [maxPageIndex]="roomMasterDataGrid.maxPageIndex"
+                            [info]="roomMasterDataGrid.info"
+                            (pageNumberChanged)="roomMasterDataGrid.currentPageIndex = $event">
+                        </app-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" (appBsModal)="modal = $event" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" [appBlockUi]="isProcessing">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLabel"><i class="fa fa-server text-orange"></i> {{+selectedRoomDetail.roomMasterId ? 'Edit' : 'Add'}}
+                    Room Details</h2>
+                <button type="button" class="close" (click)="close()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-secondary">
+                <form id="frm-room-master">
+                    <div class="row pl-lg-4 pr-lg-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label required">Room Type</label>
+                                <select class="form-control form-control-alternative" name="roomType"
+                                    [(ngModel)]="selectedRoomDetail.roomTypeId"
+                                    [disabled]="+selectedRoomDetail.roomMasterId" required>
+                                    <option value="">Select Room Type</option>
+                                    <option *ngFor="let item of commonService?.defaultValues?.roomTypes"
+                                        [value]="item.roomTypeId">
+                                        {{item.roomTypeName}}</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a room type.</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label required">Room Name</label>
+                                <input type="text" class="form-control form-control-alternative" name="roomName"
+                                    [(ngModel)]="selectedRoomDetail.roomName" placeholder="Room Name"
+                                    [disabled]="+selectedRoomDetail.roomMasterId" required>
+                                <div class="invalid-feedback">Please enter a room name.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pl-lg-4 pr-lg-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label required">Room Status</label>
+                                <select class="form-control form-control-alternative" name="roomStatus"
+                                    [(ngModel)]="selectedRoomDetail.roomStatusId"
+                                    [disabled]="+selectedRoomDetail.roomStatusId === 3" required>
+                                    <option value="">Select Room Status</option>
+                                    <option *ngFor="let item of commonService?.defaultValues?.roomStatuses"
+                                        [value]="item.roomStatusId" [disabled]="item.roomStatusName === 'Occupied'">
+                                        {{item.roomStatusName}}</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a room status.</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="close()">Close</button>
+                <button type="button" class="btn btn-primary" (click)="save()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

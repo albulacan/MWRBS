@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-md navbar-light bg-white"  [ngClass]="onScroll ? 'navbar-custom scrolled' : '' ">
+  <div class="container-fluid">
+    <!-- Toggler -->
+    <button class="navbar-toggler" type="button" (click)="isCollapsed=!isCollapsed"
+       aria-controls="sidenav-collapse-main">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Brand -->
+    <a class="navbar-brand mx-auto pr-5" routerLinkActive="active" [routerLink]="['']">
+      <img src="./assets/img/brand/montalbanlogo.png" class="navbar-brand-img" alt="...">
+    </a>
+
+    <!-- Collapse -->
+    <div class="collapse navbar-collapse"  [ngbCollapse]="isCollapsed">
+      <!-- Collapse header -->
+      <div class="navbar-collapse-header d-md-none">
+        <div class="row">
+          <div class="col-6 collapse-brand custom-txt text-dark">
+            Hello there!
+          </div>
+          <div class="col-6 collapse-close">
+            <button type="button" class="navbar-toggler" (click)="isCollapsed=!isCollapsed">
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <ul class="navbar-nav ml-auto custom-txt">
+          <li *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
+              <a *ngIf="menuItem.group === MENU_GROUP.client" routerLinkActive="active" [routerLink]="[menuItem.path]" class="nav-link">
+                  <i class="ni {{menuItem.icon}}" *ngIf="!isCollapsed"></i>
+                  {{menuItem.title}}
+              </a>
+          </li>
+      </ul>
+    </div>
+  </div>
+</nav>

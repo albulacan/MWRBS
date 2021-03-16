@@ -1,0 +1,4 @@
+button[aria-label="Add a hour"],
+button[aria-label="Minus a hour"] {
+    display: none;
+}

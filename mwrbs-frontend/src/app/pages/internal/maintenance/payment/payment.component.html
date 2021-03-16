@@ -1,0 +1,65 @@
+<div class="header bg-gradient-info pb-8 pt-5 pt-md-8"></div>
+<div class="container-fluid mt--7">
+    <div class="row">
+        <div class="col">
+            <div class="card bg-secondary shadow" [appBlockUi]="isProcessing">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center p-lg-2">
+                        <div class="col-lg-4">
+                            <select class="form-control" name="pamentType" [(ngModel)]="paymentDetail.paymentTypeId"
+                                (change)="onPaymentTypeChange()">
+                                <option value="undefined" disabled>Select Payment Type</option>
+                                <option *ngFor="let item of commonService?.defaultValues?.paymentTypes"
+                                    [value]="item.paymentTypeId">
+                                    {{item.paymentTypeName}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="frm-payment-maintenance" (submit)="save()">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Account Name</label>
+                                        <input type="text" class="form-control form-control-alternative" name="accountName"
+                                            [(ngModel)]="paymentDetail.accountName" placeholder="Account Name" required>
+                                        <div class="invalid-feedback">Please enter account name.</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Account Number</label>
+                                        <input type="text" class="form-control form-control-alternative" name="accountNumber"
+                                            [(ngModel)]="paymentDetail.accountNumber" placeholder="Account Number"
+                                            required>
+                                        <div class="invalid-feedback">Please enter account number.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Last Modified By</label>
+                                        <br />
+                                        <strong>{{paymentDetail?.modifiedBy ? paymentDetail?.modifiedBy : '--'}}</strong>
+                                        <p class="table-date-on">{{paymentDetail?.modifiedOn | date:'medium'}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4" />
+                        <button type="submit" class="btn btn-primary"
+                            [disabled]="!+paymentDetail.paymentTypeId">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

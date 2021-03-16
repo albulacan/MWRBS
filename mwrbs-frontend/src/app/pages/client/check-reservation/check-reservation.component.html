@@ -1,0 +1,379 @@
+<app-client-navbar></app-client-navbar>
+<main class="bg-gradient-info">
+    <section class="section pt-100 spacer">
+        <div class="container py-7">
+            <div class="row justify-content-center">
+                <div class="col-lg-11 col-md-12">
+                    <div class="card card-custom rounded">
+                        <div class="card-header bg-transparent">
+                            <div class="btn-wrapper text-center">
+                                <h1 class="display-3 text-info custom-txt">
+                                    Reservation Status
+                                    <span></span>
+                                </h1>
+                                <p class=" text-dark mt-3 custom-txt">
+                                    To check the status of your existing reservation, please enter the
+                                    reference number we sent on your email address. You can also update
+                                    the details of your pending reservation and add payment.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card-body rounded-bottom bg-secondary p-lg-5 p-md-5 p-2 text-left"
+                            [appBlockUi]="isProcessing">
+                            <form id="frm-reference-no" role="form" (submit)="checkStatus()">
+                                <div class="form-group mb-3">
+                                    <div class="input-group input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-id-badge" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                        <input class="form-control" name="refNumber" placeholder="Reference Number"
+                                            type="text" [(ngModel)]="reservationModel.referenceNumber" required />
+                                    </div>
+                                    <input type="text" class="form-control d-none" name="refNumber"
+                                        [(ngModel)]="reservationModel.referenceNumber" required />
+                                    <div class="invalid-feedback">Please enter a reference number.</div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-block btn-info">
+                                        Check Status
+                                    </button>
+                                </div>
+                            </form>
+                            <div *ngIf="+reservationModel.reservationId > 0">
+                                <hr />
+                                <h6 class="heading-small text-muted mb-4">Reservation Details</h6>
+                                <h3 class="text-muted mb-4">
+                                    Reservation Status:
+                                    <strong class="text-info">{{reservationModel.statusName}}</strong>
+                                </h3>
+                                <form id="frm-reservation-details">
+                                    <fieldset [disabled]="+reservationModel?.statusId !== 1">
+                                        <div class="row mb-2">
+                                            <div class="col-lg-6">
+                                                <div class="form-group mb-3">
+                                                    <div class="input-group input-group-alternative">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-calendar-check-o"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" class="form-control form-control-alternative"
+                                                            name="checkInDate" autocomplete="off"
+                                                            [(ngModel)]="reservationModel.checkInDate"
+                                                            [owlDateTime]="dtCID" [owlDateTimeTrigger]="dtCID" required
+                                                            [min]="min" [max]="max" (keydown)="$event.preventDefault()"
+                                                            (dateTimeChange)="reservationDetail.calculateAllReservation(); getAvailableRooms(); clearCheckOutDate()"
+                                                            placeholder="Check-In Date" data-toggle="tooltip"
+                                                            data-placement="top" title="Check-In Date">
+                                                        <owl-date-time [startAt]="checkInStart" [hour12Timer]="true"
+                                                            (afterPickerOpen)="disableTime()" #dtCID>
+                                                        </owl-date-time>
+                                                    </div>
+                                                    <input type="text" class="form-control d-none" name="checkInDate"
+                                                        [(ngModel)]="reservationModel.checkInDate" required />
+                                                    <div class="invalid-feedback">Please enter check-in
+                                                        date.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group mb-3">
+                                                    <div class="input-group input-group-alternative">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-calendar-check-o"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="checkOutDate"
+                                                            autocomplete="off"
+                                                            [(ngModel)]="reservationModel.checkOutDate"
+                                                            [owlDateTime]="dtCOD" [owlDateTimeTrigger]="dtCOD" required
+                                                            [min]="checkOutMin" [max]="checkOutMax"
+                                                            (keydown)="$event.preventDefault()"
+                                                            (dateTimeChange)="reservationDetail.calculateAllReservation(); getAvailableRooms()"
+                                                            placeholder="Check-Out Date" data-toggle="tooltip"
+                                                            data-placement="top" title="Check-Out Date">
+                                                        <owl-date-time [hour12Timer]="true"
+                                                            (afterPickerOpen)="disableTime()" #dtCOD>
+                                                        </owl-date-time>
+                                                    </div>
+                                                    <input type="text" class="form-control d-none" name="checkOutDate"
+                                                        [(ngModel)]="reservationModel.checkOutDate" required />
+                                                    <div class="invalid-feedback">Please enter check-out
+                                                        date.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-lg-6">
+                                                <div class="form-group mb-3">
+                                                    <app-reservation-detail [reservationMaster]="reservationModel"
+                                                        [availableRooms]="availableRooms"
+                                                        (ngRoomChange)="getAvailableRooms()">
+                                                    </app-reservation-detail>
+                                                    <small
+                                                        class="form-text text-dark-gray mt-2"><strong>Notes:</strong></small>
+                                                    <ul>
+                                                        <li><small class="form-text text-dark-gray">Please exclude
+                                                                children
+                                                                4 ft.
+                                                                and below</small></li>
+                                                        <li><small class="form-text text-dark-gray">Family Room Capacity
+                                                                ({{getRoomCapacity(1)}} pax)</small></li>
+                                                        <li><small class="form-text text-dark-gray">Standard Room
+                                                                Capacity
+                                                                ({{getRoomCapacity()}} pax)</small></li>
+                                                        <li><small class="form-text text-dark-gray">Additional mattress
+                                                                capacity is limited to the number of additional guests
+                                                                per
+                                                                room</small></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group mb-3">
+                                                    <div class="input-group input-group-alternative">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-money"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" class="form-control bg-white"
+                                                            name="totalAmountDue"
+                                                            [value]="reservationModel.grandTotal | currency: 'PHP'"
+                                                            placeholder="Total Amount Due" data-toggle="tooltip"
+                                                            data-placement="top" title="Total Amount Due" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                                <div *ngIf="isCapacityExceeded()" class="alert alert-warning" role="alert">
+                                    <strong>Reminder!</strong> Number of guests exceeds the maximum
+                                    capacity of the
+                                    selected room. Additional charges will apply.
+                                </div>
+                                <div *ngIf="noAvailableRoomMessage" class="alert alert-danger" role="alert">
+                                    <strong>No Room Avaiable!</strong> {{noAvailableRoomMessage}}
+                                </div>
+                                <hr />
+                                <div class="row">
+                                    <div class="col">
+                                        <h6 class="heading-small text-muted mb-4">Payment Details</h6>
+                                    </div>
+                                    <div class="col text-right">
+                                        <button type="button" class="btn btn-success btn-sm"
+                                            [disabled]="isDisabledStatus" (click)="newPayment()"><i class="fa fa-plus"
+                                                aria-hidden="true"></i> Add
+                                            Payment</button>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-lg-6">
+                                        <div class="form-group mb-3">
+                                            <label class="form-control-label">Total Amount Paid</label>
+                                            <input type="text" class="form-control form-control-alternative"
+                                                name="totalAmountPaid" [value]="totalPayment | currency: 'PHP'"
+                                                disabled />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group mb-3">
+                                            <label class="form-control-label">Outstanding
+                                                Balance</label>
+                                            <input type="text" class="form-control form-control-alternative"
+                                                name="outstandingBalance" [value]="outstandingBalance | currency: 'PHP'"
+                                                disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div *ngIf="hasChanges" class="alert alert-warning" role="alert">
+                                    <strong>Reminder!</strong> Kindly click Save Details button to
+                                    update your reservation and payment details.
+                                </div>
+                                <button type="button" class="btn btn-info" [disabled]="noAvailableRoomMessage"
+                                    (click)="save()">Save
+                                    Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Modals -->
+<div class="modal fade" (appBsModal)="paymentModal = $event" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" [appBlockUi]="isProcessing">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLabel"><i class="ni ni-credit-card text-yellow"></i> Add Payment
+                </h2>
+                <button type="button" class="close" (click)="closePaymentModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-secondary">
+                <div class="row mb-2">
+                    <div class="col-lg-6">
+                        <div class="form-group mb-3">
+                            <label class="form-control-label">Total Amount Paid</label>
+                            <input type="text" class="form-control form-control-alternative" name="totalAmountPaid"
+                                [value]="totalPayment | currency: 'PHP'" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-3">
+                            <label class="form-control-label">Outstanding
+                                Balance</label>
+                            <input type="text" class="form-control form-control-alternative" name="outstandingBalance"
+                                [value]="outstandingBalance | currency: 'PHP'" disabled />
+                        </div>
+                    </div>
+                </div>
+                <form id="frm-payment">
+                    <h6 class="heading-small text-muted pb-0">Resort Payment Details</h6>
+                    <small class="font-italic text-dark-gray">Kindly send your payment to the account
+                        information of the resort below.</small>
+                    <div class="row mt-4">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-credit-card"></i>
+                                        </span>
+                                    </div>
+                                    <select class="form-control form-control-alternative" name="paymentType"
+                                        [(ngModel)]="payment.paymentTypeId" (change)="onPaymentTypeChange()" required>
+                                        <option value="">Select Payment Type</option>
+                                        <option *ngFor="let item of paymentTypes" [value]="item.paymentTypeId">
+                                            {{item.paymentTypeName}}</option>
+                                    </select>
+                                </div>
+                                <input type="text" class="form-control d-none" name="paymentType"
+                                    [(ngModel)]="payment.paymentTypeId" required />
+                                <div class="invalid-feedback">Please select payment type.</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-credit-card"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control bg-white" name="resortAccountName"
+                                        placeholder="Account Name" data-toggle="tooltip" data-placement="top"
+                                        title="Account Name" [value]="paymentDetail.accountName" disabled />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-credit-card"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control bg-white" name="resortAccountName"
+                                        placeholder="Account Number" data-toggle="tooltip" data-placement="top"
+                                        title="Account Number" [value]="paymentDetail.accountNumber" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 class="heading-small text-muted mb-4">Guest Payment Details *</h6>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-credit-card"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" name="guestAccountName"
+                                        placeholder="Account Name" data-toggle="tooltip" data-placement="top"
+                                        title="Account Name" [(ngModel)]="payment.accountName" required />
+                                </div>
+                                <input type="text" class="form-control d-none" name="guestAccountName"
+                                    [(ngModel)]="payment.accountName" required />
+                                <div class="invalid-feedback">Please enter account name.</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-credit-card"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" name="guestAccountNumber"
+                                        placeholder="Account Number" data-toggle="tooltip" data-placement="top"
+                                        title="Account Number" [(ngModel)]="payment.accountNumber"
+                                        [pattern]="getAccountNumberPattern()" required />
+                                </div>
+                                <input type="text" class="form-control d-none" name="guestAccountNumber"
+                                    [(ngModel)]="payment.accountNumber" [pattern]="getAccountNumberPattern()"
+                                    required />
+                                <div class="invalid-feedback">Please enter a valid account number.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-money"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" name="amount" placeholder="Amount"
+                                        data-toggle="tooltip" data-placement="top" title="Amount"
+                                        [(ngModel)]="payment.amount" appMoney [appNumber]="{positive: true}" required />
+                                </div>
+                                <input type="text" class="form-control d-none" name="amount"
+                                    [(ngModel)]="payment.amount" required />
+                                <div class="invalid-feedback">Please enter amount.</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label required">Proof of Payment</label>
+                        <input type="file" class="form-control form-control-alternative " name="attachment"
+                            [(ngModel)]="payment.attachmentPath" (change)="onFileSelected($event)" required>
+                        <div class="invalid-feedback">Please select an attachment.</div>
+                    </div>
+                    <div *ngIf="(+payment.amount + +totalPayment) > +reservationModel.grandTotal"
+                        class="alert alert-warning" role="alert">
+                        <strong>Reminder!</strong> You have an excess payment of
+                        {{(+payment.amount + +totalPayment) - +reservationModel.grandTotal | currency: 'PHP'}}.
+                        Kindy add to proceed.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closePaymentModal()">Close</button>
+                <button type="button" class="btn btn-primary" (click)="addPayment()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,120 @@
+<p [appBlockUi]="isProcessing">
+    <a class="form-control form-control-alternative" data-toggle="collapse" href="#content" role="button"
+        aria-expanded="false" aria-controls="collapseContent">
+        <i class="fa fa-bed text-muted"></i>&nbsp;&nbsp;
+        {{totalGuests}} Guest{{totalGuests > 1 ? 's' : ''}}, {{reservationMaster?.roomCount}}
+        Room{{reservationMaster?.roomCount > 1 ? 's' : ''}}, {{totalAdditionalMattress}} Add'l Mattress
+    </a>
+</p>
+<div class="collapse" id="content">
+    <div class="card card-body p-2 p-md-3 p-lg-3">
+        <form>
+            <fieldset [disabled]="disabled">
+                <div class="row mb-3">
+                    <div class="col-6 pt-3">
+                        <label
+                            class="form-control-label required">Room{{reservationMaster.roomCount > 1 ? 's' : ''}}</label>
+                    </div>
+                    <div class="col-6">
+                        <table>
+                            <tr>
+                                <td rowspan="2">
+                                    <span class="border border-light py-2 px-3">
+                                        <strong>{{reservationMaster.roomCount}}</strong>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn p-0" (click)="plus('room')"
+                                        [disabled]="+reservationMaster.statusId === 7 || isDisabledPlusRoom"><i
+                                            class="fa fa-caret-up fa-lg" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn p-0" (click)="minus('room')"
+                                        [disabled]="+reservationMaster.roomCount === 1 || +reservationMaster.statusId === 7"><i
+                                            class="fa fa-caret-down fa-lg" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-control-label required align-middle">Room Type</label>
+                    </div>
+                    <div class="col-3">
+                        <label class="form-control-label required">Guests</label>
+                    </div>
+                    <div class="col-3">
+                        <label class="form-control-label">Add'l Mattress</label>
+                    </div>
+                </div>
+                <div class="row" *ngFor="let item of reservationMaster?.roomReservationDetails; let i = index">
+                    <div class="col-6 pt-1">
+                        <div class="form-group mb-4">
+                            <div class="input-group input-group-alternative">
+                                <select class="form-control" name="roomType{{i}}"
+                                    [(ngModel)]="reservationMaster?.roomReservationDetails[i].roomTypeId"
+                                    (change)="calculateReservation(i); ngRoomChange.emit()"
+                                    [disabled]="+reservationMaster.statusId === 7" required>
+                                    <option *ngFor="let item of commonService?.defaultValues?.roomTypes"
+                                        [value]="item.roomTypeId">
+                                        {{item.roomTypeName}}</option>
+                                </select>
+                            </div>
+                            <small *ngIf="availableRooms" class="ml-2 font-italic text-success">Available Rooms:
+                                {{getAvailableRoomCount(reservationMaster?.roomReservationDetails[i].roomTypeId)}}</small>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <table>
+                            <tr>
+                                <td rowspan="2">
+                                    <span class="border border-light py-2 px-3">
+                                        <strong>{{reservationMaster.roomReservationDetails[i].noOfGuest}}</strong>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn p-0" (click)="plus('guest', i)"
+                                        [disabled]="isDisabledGuestPlus(i)"><i
+                                            class="fa fa-caret-up fa-lg" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn p-0" (click)="minus('guest', i)"
+                                        [disabled]="+reservationMaster.roomReservationDetails[i].noOfGuest === 1"><i
+                                            class="fa fa-caret-down fa-lg" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-3">
+                        <table>
+                            <tr>
+                                <td rowspan="2">
+                                    <span class="border border-light py-2 px-3">
+                                        <strong>{{reservationMaster.roomReservationDetails[i].additionalMattress}}</strong>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn p-0" (click)="plus('mattress', i)"
+                                        [disabled]="isDisabledMattressPlus(i)"><i class="fa fa-caret-up fa-lg"
+                                            aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn p-0" (click)="minus('mattress', i)"
+                                        [disabled]="isDisabledMattressMinus(i)"><i class="fa fa-caret-down fa-lg"
+                                            aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

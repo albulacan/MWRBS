@@ -1,0 +1,40 @@
+<div class="bg-secondary py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-7 ">
+        <div class="card card-custom rounded">
+          <div class="card-header bg-transparent">
+            <div class="btn-wrapper text-center">
+              <img src="./assets/img/brand/montalbanlogo.png">
+              <h1 class="font-weight-light">Reservation and Billing System</h1>
+            </div>
+          </div>
+          <div class="card-body rounded-bottom bg-secondary p-lg-5" [appBlockUi]="isProcessing">
+            <form role="form" (submit)="login()">
+              <div class="form-group mb-3">
+                <div class="input-group input-group-alternative">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
+                  </div>
+                  <input class="form-control" name="username" [(ngModel)]="user.username" placeholder="Username" type="username">
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="input-group input-group-alternative">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                  </div>
+                  <input class="form-control" name="password" [(ngModel)]="user.password" placeholder="Password" type="password">
+                </div>
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-block btn-info">Sign in</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

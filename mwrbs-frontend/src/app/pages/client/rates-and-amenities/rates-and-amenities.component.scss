@@ -1,0 +1,18 @@
+.page-header {
+    min-height: 100vh;
+    max-height: 999px;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+}
+
+.text-danger {
+    color: rgb(207, 14, 14) !important;
+}
+
+@media (max-width: 991px) {
+    .spacer {
+        padding-top: 100px;
+    }
+}

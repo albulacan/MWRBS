@@ -1,0 +1,18 @@
+body {
+    color: black !important;
+    background-color: white !important;
+}
+
+h2, h4 {
+    color: black !important;
+}
+
+#btn-sort {
+    margin-left: 5px;
+}
+
+@media print {
+  #btn-print, #btn-sort {
+    display: none;
+  }
+}

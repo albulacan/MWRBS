@@ -1,0 +1,29 @@
+main {
+    background-color: #ffffff;
+}
+
+svg {
+    position: relative;
+    background: #ffffff;
+    text-align: center;
+    overflow: hidden;
+}
+
+@media (max-width: 991.98px) {
+    .btn-responsive {
+        display: block;
+        width: 100%;
+    }
+
+    .custom-row {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .btn-responsive-2 {
+        display: block;
+        width: 100%;
+    }
+}
+

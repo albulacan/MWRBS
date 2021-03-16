@@ -1,0 +1,469 @@
+<app-client-navbar></app-client-navbar>
+<main class="bg-gradient-info">
+    <section class="section pt-100 spacer">
+        <div class="container py-7">
+            <div class="row justify-content-center">
+                <div class="col-lg-11 col-md-12">
+                    <div *ngIf="pageNumber == 1">
+                        <form id="frm-reservation-details">
+                            <div class="card card-custom rounded">
+                                <div class="card-header bg-transparent">
+                                    <div class="btn-wrapper text-center">
+                                        <h1 class="display-3 text-info custom-txt">
+                                            Reservation Details
+                                        </h1>
+                                    </div>
+                                </div>
+                                <div class="card-body rounded-bottom bg-secondary p-lg-5 p-md-5 p-2"
+                                    [appBlockUi]="isProcessing">
+                                    <h6 class="heading-small text-muted pb-0">Reservation Date *</h6>
+                                    <small class="font-italic text-muted">Reminder: We have fixed Check-In time of 2:00
+                                        PM and Check-Out time of 12:00 PM.</small>
+                                    <div class="row mb-2 mt-4">
+                                        <div class="col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-calendar-check-o"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control form-control-alternative"
+                                                        name="checkInDate" autocomplete="off"
+                                                        [(ngModel)]="reservationModel.checkInDate" [owlDateTime]="dtCID"
+                                                        [owlDateTimeTrigger]="dtCID" required [min]="min" [max]="max"
+                                                        (keydown)="$event.preventDefault()"
+                                                        (dateTimeChange)="reservationDetail.calculateAllReservation(true); getAvailableRooms(); clearCheckOutDate();"
+                                                        placeholder="Check-In Date" data-toggle="tooltip"
+                                                        data-placement="top" title="Check-In Date">
+                                                    <owl-date-time [startAt]="checkInStart" [hour12Timer]="true"
+                                                        (afterPickerOpen)="disableTime()" #dtCID></owl-date-time>
+                                                </div>
+                                                <input type="text" class="form-control d-none" name="checkInDate"
+                                                    [(ngModel)]="reservationModel.checkInDate" required />
+                                                <div class="invalid-feedback">Please enter check-in date.</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-calendar-check-o"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="checkOutDate"
+                                                        autocomplete="off" [(ngModel)]="reservationModel.checkOutDate"
+                                                        [owlDateTime]="dtCOD" [owlDateTimeTrigger]="dtCOD" required
+                                                        [min]="checkOutMin" [max]="checkOutMax"
+                                                        (keydown)="$event.preventDefault()"
+                                                        (dateTimeChange)="reservationDetail.calculateAllReservation(true); getAvailableRooms()"
+                                                        placeholder="Check-Out Date" data-toggle="tooltip"
+                                                        data-placement="top" title="Check-Out Date">
+                                                    <owl-date-time [hour12Timer]="true" [startAt]="checkOutMin"
+                                                        (afterPickerOpen)="disableTime()" #dtCOD></owl-date-time>
+                                                </div>
+                                                <input type="text" class="form-control d-none" name="checkOutDate"
+                                                    [(ngModel)]="reservationModel.checkOutDate" required />
+                                                <div class="invalid-feedback">Please enter check-out date.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <h6 class="heading-small text-muted mb-4">Room Type & Guest Count *</h6>
+                                        </div>
+                                        <div class="col text-right">
+                                            <button type="button" class="btn btn-info btn-sm"
+                                                [routerLink]="['/rates-and-amenities']"><i class="fa fa-info-circle"
+                                                    aria-hidden="true"></i> Rates &
+                                                Amenities</button>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <app-reservation-detail [reservationMaster]="reservationModel"
+                                                    (ngRoomChange)="getAvailableRooms()"
+                                                    [availableRooms]="availableRooms">
+                                                </app-reservation-detail>
+                                                <small
+                                                    class="form-text text-dark-gray mt-2"><strong>Notes:</strong></small>
+                                                <ul>
+                                                    <li><small class="form-text text-dark-gray">Please exclude children
+                                                            4 ft.
+                                                            and below</small></li>
+                                                    <li><small class="form-text text-dark-gray">Family Room Capacity
+                                                            ({{getRoomCapacity(1)}} pax)</small></li>
+                                                    <li><small class="form-text text-dark-gray">Standard Room Capacity
+                                                            ({{getRoomCapacity()}} pax)</small></li>
+                                                    <li><small class="form-text text-dark-gray">Additional mattress
+                                                            capacity is limited to the number of additional guests per
+                                                            room</small></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-money"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control bg-white"
+                                                        name="totalAmountDue"
+                                                        [value]="reservationModel.grandTotal | currency: 'PHP'"
+                                                        placeholder="Total Amount Due" data-toggle="tooltip"
+                                                        data-placement="top" title="Total Amount Due" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="isCapacityExceeded()" class="alert alert-warning" role="alert">
+                                        <strong>Reminder!</strong> Number of guests exceeds the maximum capacity of the
+                                        selected room. Additional charges will apply.
+                                    </div>
+                                    <div *ngIf="noAvailableRoomMessage" class="alert alert-danger" role="alert">
+                                        <strong>No Room Avaiable!</strong> {{noAvailableRoomMessage}}
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-6 col-sm-12 mt-2">
+                                                <button type="button" (click)="nextPage()"
+                                                    class="btn btn-block btn-info" [disabled]="noAvailableRoomMessage">
+                                                    Next
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-5">
+                                        <span class="step active"></span>
+                                        <span class="step"></span>
+                                        <span class="step"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div *ngIf="pageNumber == 2">
+                        <form id="frm-guest-informatiion">
+                            <div class="card card-custom rounded">
+                                <div class="card-header bg-transparent">
+                                    <div class="btn-wrapper text-center">
+                                        <h1 class="display-3 text-info custom-txt">
+                                            Guest Information
+                                        </h1>
+                                    </div>
+                                </div>
+                                <div class="card-body rounded-bottom bg-secondary p-lg-5" [appBlockUi]="isProcessing">
+                                    <h6 class="heading-small text-muted mb-4">Full Name *</h6>
+                                    <div class="row mb-2">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-id-badge" aria-hidden="true"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input class="form-control" name="firstName"
+                                                        placeholder="First Name" type="text"
+                                                        [(ngModel)]="reservationModel.firstName" data-toggle="tooltip"
+                                                        data-placement="top" title="First Name" required />
+                                                </div>
+                                                <input class="form-control d-none" name="firstName" type="text"
+                                                    [(ngModel)]="reservationModel.firstName" required />
+                                                <div class="invalid-feedback">Please enter first name.</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-id-badge" aria-hidden="true"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input class="form-control" name="lastName" placeholder="Last Name"
+                                                        type="text" [(ngModel)]="reservationModel.lastName"
+                                                        data-toggle="tooltip" data-placement="top" title="Last Name"
+                                                        required />
+                                                </div>
+                                                <input class="form-control d-none" name="lastName" type="text"
+                                                    [(ngModel)]="reservationModel.lastName" required />
+                                                <div class="invalid-feedback">Please enter last name.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h6 class="heading-small text-muted mb-4">Contact *</h6>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input class="form-control" name="emailAddress"
+                                                        placeholder="Email Address" type="email"
+                                                        [(ngModel)]="reservationModel.emailAddress"
+                                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                                                        data-toggle="tooltip" data-placement="top" title="Email Address"
+                                                        required />
+                                                </div>
+                                                <input class="form-control d-none" name="emailAddress" type="text"
+                                                    [(ngModel)]="reservationModel.emailAddress"
+                                                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required />
+                                                <div class="invalid-feedback">Please enter a valid email address.</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="ni ni-mobile-button"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input class="form-control" name="contactNumber"
+                                                        placeholder="Contact Number" type="text"
+                                                        [(ngModel)]="reservationModel.contactNumber"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Contact Number" pattern="^(09|\+639)\d{9}$" required />
+                                                </div>
+                                                <input class="form-control d-none" name="contactNumber" type="text"
+                                                    [(ngModel)]="reservationModel.contactNumber"
+                                                    pattern="^(09|\+639)\d{9}$" required />
+                                                <div class="invalid-feedback">Please enter a valid contact number.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-6 col-sm-12 mt-2">
+                                                <button type="button" (click)="prevPage()"
+                                                    class="btn btn-block btn-default">
+                                                    Back
+                                                </button>
+                                            </div>
+                                            <div class="col-lg-3 col-md-6 col-sm-12 mt-2">
+                                                <button type="button" (click)="nextPage()"
+                                                    class="btn btn-block btn-info">
+                                                    Next
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-5">
+                                        <span class="step finish"></span>
+                                        <span class="step active"></span>
+                                        <span class="step"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div *ngIf="pageNumber == 3">
+                        <form id="frm-payment-details">
+                            <div class="card card-custom rounded">
+                                <div class="card-header bg-transparent">
+                                    <div class="btn-wrapper text-center">
+                                        <div class="btn-wrapper text-center">
+                                            <h1 class="display-3 text-info custom-txt">
+                                                Payment Details
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body rounded-bottom bg-secondary p-lg-5" [appBlockUi]="isProcessing">
+                                    <h3 class="text-muted mb-2">
+                                        <strong>Total Amount Due: {{reservationModel.grandTotal | currency: 'PHP'}}</strong>
+                                    </h3>
+                                    <small *ngIf="isFutureReservation" class="font-italic text-dark-gray">Reminder:
+                                        Kindly settle at least half of
+                                        the total amount due within 3 days to acknowledge your reservation.</small>
+                                    <hr>
+                                    <h6 class="heading-small text-muted pb-0">Resort Payment Details</h6>
+                                    <small class="font-italic text-dark-gray">Kindly send your payment to the
+                                        account
+                                        information of the resort below.</small>
+                                    <div class="row mt-4">
+                                        <div class="col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-credit-card"></i>
+                                                        </span>
+                                                    </div>
+                                                    <select class="form-control form-control-alternative"
+                                                        name="paymentType" [(ngModel)]="payment.paymentTypeId"
+                                                        (change)="onPaymentTypeChange()" required>
+                                                        <option value="">Select Payment Type</option>
+                                                        <option *ngFor="let item of paymentTypes"
+                                                            [value]="item.paymentTypeId">
+                                                            {{item.paymentTypeName}}</option>
+                                                    </select>
+                                                </div>
+                                                <input type="text" class="form-control d-none" name="paymentType"
+                                                    [(ngModel)]="payment.paymentTypeId" required />
+                                                <div class="invalid-feedback">Please select payment type.</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-credit-card"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control bg-white"
+                                                        name="resortAccountName" placeholder="Account Name"
+                                                        [value]="paymentDetail.accountName" data-toggle="tooltip"
+                                                        data-placement="top" title="Account Name" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-credit-card"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control bg-white"
+                                                        name="resortAccountName" placeholder="Account Number"
+                                                        [value]="paymentDetail.accountNumber" data-toggle="tooltip"
+                                                        data-placement="top" title="Account Number" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <h6 class="heading-small text-muted mb-4">Guest Payment Details *</h6>
+                                        </div>
+                                        <div class="col text-right" *ngIf="!isTodayReservation">
+                                            <input type="checkbox" [checked]="payLater"
+                                                (change)="payLater = !payLater" /> <label
+                                                class="form-control-label">&nbsp;Pay Later</label>
+                                        </div>
+                                    </div>
+                                    <fieldset [disabled]="payLater">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group mb-3">
+                                                    <div class="input-group input-group-alternative">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-credit-card"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="guestAccountName"
+                                                            placeholder="Account Name" [(ngModel)]="payment.accountName"
+                                                            data-toggle="tooltip" data-placement="top"
+                                                            title="Account Name" required />
+                                                    </div>
+                                                    <input type="text" class="form-control d-none"
+                                                        name="guestAccountName" [(ngModel)]="payment.accountName"
+                                                        required />
+                                                    <div class="invalid-feedback">Please enter account name.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group mb-3">
+                                                    <div class="input-group input-group-alternative">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-credit-card"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" class="form-control"
+                                                            name="guestAccountNumber" placeholder="Account Number"
+                                                            [(ngModel)]="payment.accountNumber" data-toggle="tooltip"
+                                                            data-placement="top" title="Account Number"
+                                                            [pattern]="getAccountNumberPattern()" required />
+                                                    </div>
+                                                    <input type="text" class="form-control d-none"
+                                                        name="guestAccountNumber" [(ngModel)]="payment.accountNumber"
+                                                        [pattern]="getAccountNumberPattern()" required />
+                                                    <div class="invalid-feedback">Please enter a valid account number.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group mb-3">
+                                                    <div class="input-group input-group-alternative">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-money"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="amount"
+                                                            placeholder="Amount" [(ngModel)]="payment.amount" appMoney
+                                                            [appNumber]="{positive: true}" data-toggle="tooltip"
+                                                            data-placement="top" title="Amount" required />
+                                                    </div>
+                                                    <input type="text" class="form-control d-none" name="amount"
+                                                        [(ngModel)]="payment.amount" required />
+                                                    <div class="invalid-feedback">Please enter amount.</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-control-label required">Proof of Payment</label>
+                                            <input type="file" class="form-control form-control-alternative "
+                                                name="attachment" [(ngModel)]="payment.attachmentPath"
+                                                (change)="onFileSelected($event)" required>
+                                            <div class="invalid-feedback">Please select an attachment.</div>
+                                        </div>
+                                        <div *ngIf="+payment.amount > +reservationModel.grandTotal"
+                                            class="alert alert-warning" role="alert">
+                                            <strong>Reminder!</strong> You have an excess payment of
+                                            {{+payment.amount - +reservationModel.grandTotal | currency: 'PHP'}}.
+                                            Kindy
+                                            submit to proceed.
+                                        </div>
+                                    </fieldset>
+                                    <div class="text-center mt-4">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-6 col-sm-12 mt-2">
+                                                <button type="button" (click)="prevPage()"
+                                                    class="btn btn-block btn-default">
+                                                    Back
+                                                </button>
+                                            </div>
+                                            <div class="col-lg-3 col-md-6 col-sm-12 mt-2">
+                                                <button type="button" class="btn btn-block btn-info" (click)="submit()">
+                                                    Submit
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-5">
+                                        <span class="step finish"></span>
+                                        <span class="step finish"></span>
+                                        <span class="step active"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

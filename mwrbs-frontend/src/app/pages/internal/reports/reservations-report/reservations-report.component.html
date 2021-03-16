@@ -1,0 +1,77 @@
+<div class="text-center p-5">
+    <img src="./assets/img/brand/montalbanlogo.png" width="150">
+    <h2>Montalban Waterpark and Garden Resort</h2>
+    <h2>Reservations Report</h2>
+    <h4>{{request.dateFrom | date: 'mediumDate'}} - {{request.dateTo | date: 'mediumDate'}}</h4>
+    <br />
+    <table [appBlockUi]="dataGrid.isProcessing">
+        <thead>
+            <th>
+                Guest Name
+                <button id="btn-sort" class="btn btn-link p-0 float-right" (click)="dataGrid.sort('firstName')"><i
+                        [class]="dataGrid.getSortIcon('firstName')"></i></button>
+            </th>
+            <th>
+                Reference Number
+                <button id="btn-sort" class="btn btn-link p-0 float-right" (click)="dataGrid.sort('referenceNumber')"><i
+                        [class]="dataGrid.getSortIcon('referenceNumber')"></i></button>
+            </th>
+            <th>
+                Reservation Date
+                <button id="btn-sort" class="btn btn-link p-0 float-right" (click)="dataGrid.sort('createdOn')"><i
+                        [class]="dataGrid.getSortIcon('createdOn')"></i></button>
+            </th>
+            <th>
+                Check-In Date
+                <button id="btn-sort" class="btn btn-link p-0 float-right" (click)="dataGrid.sort('checkInDate')"><i
+                        [class]="dataGrid.getSortIcon('checkInDate')"></i></button>
+            </th>
+            <th>
+                Check-Out Date
+                <button id="btn-sort" class="btn btn-link p-0 float-right" (click)="dataGrid.sort('checkOutDate')"><i
+                        [class]="dataGrid.getSortIcon('checkOutDate')"></i></button>
+            </th>
+            <th>
+                Guests
+                <button id="btn-sort" class="btn btn-link p-0 float-right" (click)="dataGrid.sort('noOfGuest')"><i
+                        [class]="dataGrid.getSortIcon('noOfGuest')"></i></button>
+            </th>
+            <th>
+                Room Type
+                <button id="btn-sort" class="btn btn-link p-0 float-right" (click)="dataGrid.sort('roomTypeName')"><i
+                        [class]="dataGrid.getSortIcon('roomTypeName')"></i></button>
+            </th>
+            <th>
+                Status
+                <button id="btn-sort" class="btn btn-link p-0 float-right" (click)="dataGrid.sort('statusName')"><i
+                        [class]="dataGrid.getSortIcon('statusName')"></i></button>
+            </th>
+        </thead>
+        <tbody>
+            <tr *ngIf="!dataGrid?.itemsOnCurrentPage?.length">
+                <td class="text-center" colspan="9">No records found.</td>
+            </tr>
+            <tr *ngFor="let item of dataGrid.itemsOnCurrentPage; let i = index">
+                <td>{{item.firstName}} {{item.lastName}}</td>
+                <td>{{item.referenceNumber}}</td>
+                <td>{{item.createdOn | date: 'medium'}}</td>
+                <td>{{item.checkInDate | date: 'medium'}}</td>
+                <td>{{item.checkOutDate | date: 'medium'}}</td>
+                <td>{{guests(i)}}</td>
+                <td>{{roomType(i)}}</td>
+                <td>{{item.statusName}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-12">
+            Prepared by: <strong>{{commonService?.userFullName}}</strong>
+            <br />
+            {{currentDate | date: 'medium'}}
+        </div>
+    </div>
+    <button type="button" id="btn-print" class="btn btn-info mt-5" (click)="print()"><i class="fa fa-print"
+            aria-hidden="true"></i> Print</button>
+</div>

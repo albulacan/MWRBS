@@ -1,0 +1,359 @@
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<div class="header bg-gradient-info pb-8 pt-5 pt-md-8"></div>
+<div class="container-fluid mt--7">
+    <div class="row">
+        <div class="col">
+            <div class="card shadow" [appBlockUi]="reservationsDataGrid.isProcessing">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center p-lg-2">
+                        <div class="col-lg-12">
+                            <form (submit)="reservationsDataGrid.load(true)">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <input type="text" class="form-control" name="referenceNo"
+                                            [(ngModel)]="filter.referenceNumber" placeholder="Reference #">
+                                    </div>
+                                    <div class="col">
+                                        <select class="form-control" name="status" [(ngModel)]="filter.statusId">
+                                            <option value="0">Select Status</option>
+                                            <option
+                                                *ngFor="let item of commonService?.defaultValues?.reservationStatuses"
+                                                [value]="item.statusId">
+                                                {{item.statusName}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col text-right">
+                                        <button type="button" class="btn btn-success" (click)="new()">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                            New
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Reference Number</th>
+                                    <th scope="col">Room Type</th>
+                                    <th scope="col">Guest</th>
+                                    <th scope="col">Created On</th>
+                                    <th scope="col">Modified By</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngIf="!reservationsDataGrid || !reservationsDataGrid.itemsOnCurrentPage.length">
+                                    <td class="text-center" colspan="6">No records found.</td>
+                                </tr>
+                                <tr *ngFor="let item of reservationsDataGrid.itemsOnCurrentPage; let i = index">
+                                    <td>
+                                        <button class="btn btn-link"
+                                            (click)="view(item.referenceNumber)">{{item.referenceNumber}}</button>
+                                    </td>
+                                    <td>{{roomType(i)}}</td>
+                                    <td>{{item.firstName + ' ' + item.lastName}}</td>
+                                    <td>{{item.createdOn | date:'medium'}}</td>
+                                    <td>
+                                        {{item.modifiedBy}}
+                                        <p class="table-date-on">{{item.modifiedOn | date:'medium'}}</p>
+                                    </td>
+                                    <td>{{item.statusName}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer py-4">
+                        <app-pagination [maxPageIndex]="reservationsDataGrid.maxPageIndex"
+                            [info]="reservationsDataGrid.info"
+                            (pageNumberChanged)="reservationsDataGrid.currentPageIndex = $event">
+                        </app-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" (appBsModal)="modal = $event" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document" [appBlockUi]="isProcessing">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLabel"><i class="ni ni-calendar-grid-58 text-primary"></i>
+                    Reservation Details -
+                    {{!isNew ? reservationMaster.referenceNumber : 'NEW'}}</h2>
+                <button type="button" class="close" (click)="close()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-secondary">
+                <form class="mb-3" id="frm-guest-information">
+                    <h6 class="heading-small text-muted mb-4">Guest information</h6>
+                    <fieldset [disabled]="!isNew">
+                        <div class="row pl-lg-4 pr-lg-4">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label required">First Name</label>
+                                    <input type="text" class="form-control form-control-alternative" name="firstName"
+                                        placeholder="First Name" [(ngModel)]="reservationMaster.firstName" required>
+                                    <div class="invalid-feedback">Please enter first name.</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label required">Last Name</label>
+                                    <input type="text" class="form-control form-control-alternative" name="lastName"
+                                        placeholder="Last Name" [(ngModel)]="reservationMaster.lastName" required>
+                                    <div class="invalid-feedback">Please enter last name.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-lg-4 pr-lg-4">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Email Address</label>
+                                    <input type="email" class="form-control form-control-alternative" name="emailAdd"
+                                        placeholder="Email Address" [(ngModel)]="reservationMaster.emailAddress"
+                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
+                                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label required">Contact Number</label>
+                                    <input type="text" class="form-control form-control-alternative" name="contactNo"
+                                        placeholder="Contact Number" [(ngModel)]="reservationMaster.contactNumber"
+                                        required>
+                                    <div class="invalid-feedback">Please enter contact number.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+                <hr class="my-4" />
+                <h6 class="heading-small text-muted mb-4">Reservation Details</h6>
+                <form class="mb-3" id="frm-reservation-details">
+                    <fieldset [disabled]="isDisabledStatus">
+                        <div class="row pl-lg-4 pr-lg-4">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label required">Check-In Date</label>
+                                    <input type="text" class="form-control form-control-alternative" name="checkInDate"
+                                        autocomplete="off" [(ngModel)]="reservationMaster.checkInDate"
+                                        [owlDateTime]="dtCID" [owlDateTimeTrigger]="dtCID" required [min]="min"
+                                        [max]="max" (keydown)="$event.preventDefault()"
+                                        (dateTimeChange)="reservationDetail.calculateAllReservation(); getAvailableRooms(); clearCheckOutDate()"
+                                        [disabled]="+reservationMaster.statusId === 7">
+                                    <owl-date-time [startAt]="checkInStart" [hour12Timer]="true" #dtCID></owl-date-time>
+                                    <div class="invalid-feedback">Please enter check-in date.</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label required">Check-Out Date</label>
+                                    <input type="text" class="form-control form-control-alternative" name="checkOutDate"
+                                        autocomplete="off" [(ngModel)]="reservationMaster.checkOutDate"
+                                        [owlDateTime]="dtCOD" [owlDateTimeTrigger]="dtCOD" required [min]="checkOutMin"
+                                        [max]="max" (keydown)="$event.preventDefault()"
+                                        (dateTimeChange)="reservationDetail.calculateAllReservation(); getAvailableRooms()">
+                                    <owl-date-time [hour12Timer]="true" #dtCOD></owl-date-time>
+                                    <div class="invalid-feedback">Please enter check-out date.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-lg-4 pr-lg-4">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Room Details</label>
+                                    <app-reservation-detail *ngIf="initReservation"
+                                        [reservationMaster]="reservationMaster" [availableRooms]="origAvailableRooms"
+                                        [isInternal]="true" (ngRoomChange)="getAvailableRooms(true)">
+                                    </app-reservation-detail>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Total Amount Due</label>
+                                    <input type="text" class="form-control form-control-alternative"
+                                        name="totalAmountDue" [value]="reservationMaster.grandTotal | currency: 'PHP'"
+                                        disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+                <hr class="my-4" />
+                <div class="row">
+                    <div class="col">
+                        <h6 class="heading-small text-muted mb-4">Payment Details</h6>
+                    </div>
+                    <div class="col text-right">
+                        <button type="button" class="btn btn-success btn-sm" [disabled]="isDisabledStatus"
+                            (click)="newPayment()"><i class="fa fa-plus" aria-hidden="true"></i> Add Payment</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Payment Type</th>
+                                <th scope="col">Account Number</th>
+                                <th scope="col">Account Name</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Payment Date</th>
+                                <th scope="col">Attachment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="!reservationMaster.payments || !reservationMaster.payments.length">
+                                <td class="text-center" colspan="6">No payments made.</td>
+                            </tr>
+                            <tr *ngFor="let item of reservationMaster.payments">
+                                <td>{{item.paymentTypeName}}</td>
+                                <td>{{item.accountNumber}}</td>
+                                <td>{{item.accountName}}</td>
+                                <td>{{item.amount | currency: 'PHP'}}</td>
+                                <td>{{item.createdOn | date:'medium'}}</td>
+                                <td>
+                                    <button class="btn btn-link" [disabled]="!item.attachmentPath"
+                                        (click)="download(item.attachmentPath)">Download</button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="+totalPayment">
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>TOTAL</strong></td>
+                                <td>{{totalPayment | currency: 'PHP'}}</td>
+                            </tr>
+                            <tr *ngIf="+totalPayment">
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>OUTSTANDING BALANCE</strong></td>
+                                <td>{{outstandingBalance | currency: 'PHP'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr class="my-4" />
+                <h6 class="heading-small text-muted mb-4">Room Assignment</h6>
+                <form class="mb-3" id="frm-assigned-room" [appBlockUi]="isAvailableRoomsProcessing">
+                    <div class="row pl-lg-4 pr-lg-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label">Available Rooms</label>
+                                <app-bs-select [title]="'Select Rooms to Assign'" [disabled]="isDisabledStatus"
+                                    [options]="availableRooms" [data]="assignedRooms"
+                                    (dataChange)="setReservationAssignedRooms($event)"></app-bs-select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                        </div>
+                    </div>
+                    <div *ngIf="reservationMaster?.checkInDate && reservationMaster.checkOutDate && !availableRooms?.length"
+                        class="alert alert-warning" role="alert">
+                        <strong>No room available!</strong> No room available for the selected dates.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="close()">Close</button>
+                <button *ngIf="isNew" type="button" class="btn btn-success" (click)="add()">Add Reservation</button>
+                <button *ngIf="!isDisabledStatus && (!isNew || +reservationMaster.statusId === 7)" type="button"
+                    class="btn btn-primary" (click)="update()">Update
+                    Details</button>
+                <button *ngIf="reservationMaster?.statusId === 2" type="button" class="btn btn-success"
+                    (click)="checkIn()" [disabled]="hasReservationChanges">Check-In</button>
+                <button *ngIf="+reservationMaster.statusId === 1" type="button" class="btn btn-success"
+                    (click)="approve()">Approve</button>
+                <button *ngIf="+reservationMaster.statusId === 1" type="button" class="btn btn-warning"
+                    (click)="disapprove()">Disapprove</button>
+                <button *ngIf="+reservationMaster.statusId === 1 || +reservationMaster.statusId === 2" type="button"
+                    class="btn btn-danger" (click)="cancel()">Cancel</button>
+                <button *ngIf="+reservationMaster.statusId === 7" type="button" class="btn btn-success"
+                    [disabled]="hasReservationChanges" (click)="complete()">Complete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" (appBsModal)="paymentModal = $event" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" [appBlockUi]="isProcessing">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLabel"><i class="ni ni-credit-card text-yellow"></i> Add Payment
+                </h2>
+                <button type="button" class="close" (click)="closePaymentModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-secondary">
+                <form id="frm-payment">
+                    <div class="row pl-lg-4 pr-lg-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label required">Payment Type</label>
+                                <select class="form-control form-control-alternative" name="paymentType"
+                                    [(ngModel)]="payment.paymentTypeId" required>
+                                    <option value="">Select Payment Type</option>
+                                    <option *ngFor="let item of commonService?.defaultValues?.paymentTypes"
+                                        [value]="item.paymentTypeId">
+                                        {{item.paymentTypeName}}</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a payment type.</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label required">Amount</label>
+                                <input type="text" class="form-control form-control-alternative" name="amount"
+                                    [(ngModel)]="payment.amount" placeholder="Amount" appMoney
+                                    [appNumber]="{positive: true}" required>
+                                <div class="invalid-feedback">Please enter payment amount.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pl-lg-4 pr-lg-4" *ngIf="+payment.paymentTypeId !== 1">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label required">Account Name</label>
+                                <input type="text" class="form-control form-control-alternative" name="accountName"
+                                    [(ngModel)]="payment.accountName" placeholder="Account Name" required>
+                                <div class="invalid-feedback">Please enter account name.</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label required">Account Number</label>
+                                <input type="text" class="form-control form-control-alternative" name="accountNumber"
+                                    [(ngModel)]="payment.accountNumber" placeholder="Account Number" required>
+                                <div class="invalid-feedback">Please enter account number.</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closePaymentModal()">Close</button>
+                <button type="button" class="btn btn-primary" (click)="addPayment()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>

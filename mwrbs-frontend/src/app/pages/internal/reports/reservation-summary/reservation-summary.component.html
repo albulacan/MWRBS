@@ -1,0 +1,310 @@
+<div class="text-center p-5">
+    <img src="./assets/img/brand/montalbanlogo.png" width="150">
+    <h2>Montalban Waterpark and Garden Resort</h2>
+    <h2>Reservation Summary</h2>
+    <h4>{{referenceNo}}</h4>
+    <br />
+    <div class="col-lg-10 text-left m-auto" [appBlockUi]="isProcessing">
+        <strong>Guest Information</strong>
+        <div class="row">
+            <div class="col-2">
+                Name
+            </div>
+            <div class="col-4">
+                {{reservation.firstName}} {{reservation.lastName}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                Contact Number
+            </div>
+            <div class="col-2">
+                {{reservation.contactNumber}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+        <br />
+        <strong>Resservation Details</strong>
+        <div class="row">
+            <div class="col-2">
+                Reservation Date
+            </div>
+            <div class="col-3">
+                {{reservation.createdOn | date: 'medium'}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                Check-In Date
+            </div>
+            <div class="col-3">
+                {{reservation.checkInDate | date: 'medium'}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                Check-Out Date
+            </div>
+            <div class="col-3">
+                {{reservation.checkOutDate | date: 'medium'}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                Room Type
+            </div>
+            <div class="col-2">
+                Guest(s)
+            </div>
+            <div class="col-2">
+                Rate
+            </div>
+            <div class="col-2">
+                Quantity
+            </div>
+            <div class="col-2">
+                Capacity
+            </div>
+            <div class="col-2">
+                Amount
+            </div>
+        </div>
+        <div class="row" *ngFor="let item of reservation?.roomReservationDetails; let i = index">
+            <div class="col-2">
+                {{reservation?.roomReservationDetails[i].roomTypeName}}
+            </div>
+            <div class="col-2">
+                {{reservation?.roomReservationDetails[i]?.noOfGuest}}
+            </div>
+            <div class="col-2">
+                {{getRoomRate(i)?.rate | currency: 'PHP'}}
+            </div>
+            <div class="col-2">
+                {{getRateMultiplier(i)}}
+            </div>
+            <div class="col-2">
+                {{getRoomRate(i)?.capacity}}
+            </div>
+            <div class="col-2">
+                {{(getRoomRate(i)?.rate * getRateMultiplier(i)) | currency: 'PHP'}}
+            </div>
+        </div>
+        <div class="row" *ngIf="hasFamily">
+            <div class="col-2">
+                Add'l Guest(s) - Family
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{familyRoomRates?.additionalGuestRate | currency: 'PHP'}}
+            </div>
+            <div class="col-2">
+                {{getTotalAdditionalGuest(1)}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{familyRoomRates?.additionalGuestRate * getTotalAdditionalGuest(1) | currency: 'PHP'}}
+            </div>
+        </div>
+        <div class="row" *ngIf="hasStandard">
+            <div class="col-2">
+                Add'l Guest(s) - Standard
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{standardRoomRates?.additionalGuestRate | currency: 'PHP'}}
+            </div>
+            <div class="col-2">
+                {{getTotalAdditionalGuest(2)}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{standardRoomRates?.additionalGuestRate * getTotalAdditionalGuest(2) | currency: 'PHP'}}
+            </div>
+        </div>
+        <div class="row" *ngIf="hasFamily">
+            <div class="col-2">
+                Add'l Mattress - Family
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{familyRoomRates?.mattressRate | currency: 'PHP'}}
+            </div>
+            <div class="col-2">
+                {{getTotalAdditionalMattress(1)}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{familyRoomRates?.mattressRate * getTotalAdditionalMattress(1) | currency: 'PHP'}}
+            </div>
+        </div>
+        <div class="row" *ngIf="hasStandard">
+            <div class="col-2">
+                Add'l Mattress - Standard
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{standardRoomRates?.mattressRate | currency: 'PHP'}}
+            </div>
+            <div class="col-2">
+                {{getTotalAdditionalMattress(2)}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{standardRoomRates?.mattressRate * getTotalAdditionalMattress(2) | currency: 'PHP'}}
+            </div>
+        </div>
+        <div class="row" *ngIf="hasFamily">
+            <div class="col-2">
+                Add'l Hours - Family
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{familyRoomRates?.additionalRatePerHour | currency: 'PHP'}}
+            </div>
+            <div class="col-2">
+                {{familyAdditionalHours}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{familyRoomRates?.additionalRatePerHour * familyAdditionalHours | currency: 'PHP'}}
+            </div>
+        </div>
+        <div class="row" *ngIf="hasStandard">
+            <div class="col-2">
+                Add'l Hours - Standard
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{standardRoomRates?.additionalRatePerHour | currency: 'PHP'}}
+            </div>
+            <div class="col-2">
+                {{standardAdditionalHours}}
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                {{standardRoomRates?.additionalRatePerHour * standardAdditionalHours | currency: 'PHP'}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <strong>TOTAL AMOUNT DUE</strong>
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+                <strong>{{reservation?.grandTotal | currency: 'PHP'}}</strong>
+            </div>
+        </div>
+        <br />
+        <strong>Payment Details</strong>
+        <div class="row">
+            <div class="col-3">
+                Payment Type
+            </div>
+            <div class="col-3">
+                Payment Date
+            </div>
+            <div class="col-3">
+                Payment Amount
+            </div>
+            <div class="col-3">
+            </div>
+        </div>
+        <div *ngFor="let payment of reservation?.payments" class="row">
+            <div class="col-3">
+                {{payment.paymentTypeName}}
+            </div>
+            <div class="col-3">
+                {{payment.createdOn | date: 'medium'}}
+            </div>
+            <div class="col-3">
+                {{payment.amount | currency: 'PHP'}}
+            </div>
+            <div class="col-3">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <strong>TOTAL PAYMENT</strong>
+            </div>
+            <div class="col-3">
+            </div>
+            <div class="col-3">
+                <strong>{{totalPayment | currency: 'PHP'}}</strong>
+            </div>
+            <div class="col-3">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <strong>OUTSTANDING BALANCE</strong>
+            </div>
+            <div class="col-3">
+            </div>
+            <div class="col-3">
+                <strong>{{outstandingBalance | currency: 'PHP'}}</strong>
+            </div>
+            <div class="col-3">
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-12">
+                Prepared by: <strong>{{commonService?.userFullName}}</strong>
+                <br />
+                {{currentDate | date: 'medium'}}
+            </div>
+        </div>
+    </div>
+    <button type="button" id="btn-print" class="btn btn-info mt-5" (click)="print()"><i class="fa fa-print" aria-hidden="true"></i> Print</button>
+</div>

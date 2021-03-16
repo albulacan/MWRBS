@@ -1,0 +1,52 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~izitoast/dist/css/iziToast.min.css';
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700';
+@import 'https://fonts.cdnfonts.com/css/gt-walsheim-pro';
+@import "~ng-pick-datetime/assets/style/picker.min.css";
+
+@media (min-width: 992px) { 
+  /* width */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #efefef;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #808080; 
+    height: 10px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:active {
+    background: #0f7b7d; 
+  }
+}
+
+.table-date-on {
+  color: #8a8a8a !important;
+  font-size: 10pt !important;
+  margin-bottom: 0px;
+}
+
+.section-title {
+  font-weight: bold;
+  border-bottom: 2px solid #0f7b7d;
+}
+
+.required::after {
+  content: " *";
+  color: red;
+}
+
+.modal {
+  overflow-y: auto !important;
+}
+
+.custom-txt {
+  font-family: 'GT Walsheim Pro', sans-serif;
+}

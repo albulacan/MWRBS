@@ -1,0 +1,29 @@
+body {
+    color: black !important;
+    background-color: white !important;
+}
+
+table {
+    margin: auto;
+    border: 1px solid gray;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid gray;
+    padding: 5px;
+}
+
+h2, h4 {
+    color: black !important;
+}
+
+#btn-sort {
+    margin-left: 5px;
+}
+
+@media print {
+  #btn-print, #btn-sort {
+    display: none;
+  }
+}

@@ -1,0 +1,79 @@
+<div class="header bg-gradient-info pb-8 pt-5 pt-md-8"></div>
+<div class="container-fluid mt--7">
+    <div class="row">
+        <div class="col">
+            <div class="card bg-secondary" [appBlockUi]="isProcessing">
+                <div class="card-body">
+                    <h6 class="heading-small text-muted mb-4">Smtp Configuration</h6>
+                    <form id="frm-email-settings" (submit)="save()">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Smtp Server</label>
+                                        <input type="text" class="form-control form-control-alternative"
+                                            name="smtpServer" [(ngModel)]="emailSettings.smtpServer"
+                                            placeholder="Smtp Server" required>
+                                        <div class="invalid-feedback">Please enter smtp server.</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Smtp Port</label>
+                                        <input type="number" class="form-control form-control-alternative"
+                                            name="smtpPort" [(ngModel)]="emailSettings.smtpPort" placeholder="Smtp Port"
+                                            required [appNumber]="{positive: true, whole: true}">
+                                        <div class="invalid-feedback">Please enter smtp port.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Username</label>
+                                        <input type="text" class="form-control form-control-alternative" name="username"
+                                            [(ngModel)]="emailSettings.username" placeholder="Username" required>
+                                        <div class="invalid-feedback">Please enter username.</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Password</label>
+                                        <input type="password" class="form-control form-control-alternative" name="password"
+                                            [(ngModel)]="emailSettings.password" placeholder="Password" required>
+                                        <div class="invalid-feedback">Please enter password.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4" />
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                    <hr class="my-4" />
+                    <h6 class="heading-small text-muted mb-4">Test Email</h6>
+                    <form id="frm-test-email" (submit)="sendTestEmail()">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Email Address</label>
+                                        <input type="email" class="form-control form-control-alternative" name="emailAddress"
+                                            [(ngModel)]="emailRequest.recipients" placeholder="Email Address" required>
+                                        <small class="form-text text-muted">Email with default subject and message will
+                                            be sent to
+                                            this email address</small>
+                                        <div class="invalid-feedback">Please enter email address.</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4" />
+                        <button type="submit" class="btn btn-primary">Send Test Email</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+.navbar-brand-img {
+    width: 160px;
+    max-height: none !important;
+}
+
+@media (min-width: 768px) {
+    .navbar-vertical .navbar-collapse:before {
+        margin-top: -20px !important;
+    }
+}

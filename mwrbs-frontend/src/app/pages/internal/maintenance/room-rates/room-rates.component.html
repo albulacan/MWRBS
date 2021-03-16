@@ -1,0 +1,117 @@
+<div class="header bg-gradient-info pb-8 pt-5 pt-md-8"></div>
+<div class="container-fluid mt--7">
+    <div class="row">
+        <div class="col">
+            <div class="card bg-secondary shadow" [appBlockUi]="isProcessing">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center p-lg-2">
+                        <div class="col-lg-4">
+                            <select class="form-control" name="roomType" [(ngModel)]="roomRate.roomTypeId"
+                                (change)="onRoomTypeChange()">
+                                <option value="undefined" disabled>Select Room Type</option>
+                                <option *ngFor="let item of commonService?.defaultValues?.roomTypes"
+                                    [value]="item.roomTypeId">
+                                    {{item.roomTypeName}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="frm-room-rates" (submit)="save()">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Room Rate</label>
+                                        <input type="text" class="form-control form-control-alternative" name="rate"
+                                            [(ngModel)]="roomRate.rate" placeholder="Room Rate" appMoney
+                                            [appNumber]="{positive: true}" required>
+                                        <div class="invalid-feedback">Please enter a rate.</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Rate Effectivity (Hours)</label>
+                                        <input type="number" class="form-control form-control-alternative"
+                                            name="rateEffectivity" [(ngModel)]="roomRate.rateEffectivity"
+                                            placeholder="Rate Effectivity/Hours"
+                                            [appNumber]="{positive: true, whole: true}" required>
+                                        <div class="invalid-feedback">Please enter rate effectivity/hours.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Room Capacity</label>
+                                        <input type="number" class="form-control form-control-alternative"
+                                            name="capacity" [(ngModel)]="roomRate.capacity" placeholder="Room Capacity"
+                                            [appNumber]="{positive: true, whole: true}" required>
+                                        <div class="invalid-feedback">Please enter room capacity.</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Additional Rate Per Hour</label>
+                                        <input type="text" class="form-control form-control-alternative"
+                                            name="additionalRatePerHour" [(ngModel)]="roomRate.additionalRatePerHour"
+                                            placeholder="Additional Room Rate Per Hour" appMoney
+                                            [appNumber]="{positive: true}" required>
+                                        <div class="invalid-feedback">Please enter additional rate per hour.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Additional Guest Capacity</label>
+                                        <input type="number" class="form-control form-control-alternative"
+                                            name="additionalGuestCapacity"
+                                            [(ngModel)]="roomRate.additionalGuestCapacity"
+                                            placeholder="Additional Guest Capacity"
+                                            [appNumber]="{positive: true, whole: true}" required>
+                                        <div class="invalid-feedback">Please enter additional guest capacity.</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Additional Guest Rate</label>
+                                        <input type="text" class="form-control form-control-alternative"
+                                            name="additionalGuestRate" [(ngModel)]="roomRate.additionalGuestRate"
+                                            placeholder="Additional Guest Rate" appMoney [appNumber]="{positive: true}"
+                                            required>
+                                        <div class="invalid-feedback">Please enter additional guest rate.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label required">Mattress Rate</label>
+                                        <input type="text" class="form-control form-control-alternative"
+                                            name="mattressRate" [(ngModel)]="roomRate.mattressRate"
+                                            placeholder="Mattress Rate" appMoney [appNumber]="{positive: true}"
+                                            required>
+                                        <div class="invalid-feedback">Please enter mattress rate.</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label">Last Modified By</label>
+                                        <br />
+                                        <strong>{{roomRate?.modifiedBy ? roomRate?.modifiedBy : '--'}}</strong>
+                                        <p class="table-date-on">{{roomRate?.modifiedOn | date:'medium'}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4" />
+                        <button type="submit" class="btn btn-primary ml-lg-2"
+                            [disabled]="!+roomRate.roomTypeId">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

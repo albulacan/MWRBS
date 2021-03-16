@@ -1,0 +1,29 @@
+.page-header {
+    padding: 0;
+    overflow: visible;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+}
+
+.bg-img {
+    content: url('../../../../assets/img/theme/pool4.jpg');
+}
+
+
+.custom-box {
+    margin:0;
+    padding: 0;
+    width: 100vw;
+}
+
+.row {
+    width: 100vw;
+}
+
+@media (max-width: 991.98px) {
+    .custom-box {
+        padding: 15px !important;
+    }
+}
